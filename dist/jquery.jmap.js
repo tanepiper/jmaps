@@ -4,7 +4,7 @@
  * @namespace Mapifies
  * @id Mapifies
  * @author Tane Piper <tane@digitalspaghetti.me.uk>
- * 
+ *
  */
 var Mapifies;
 
@@ -134,12 +134,12 @@ Mapifies.Initialise = function ( element, options, callback ) {
 		};
 	};
 	options = jQuery.extend(defaults(), options);
-	
+
 	if (GBrowserIsCompatible()) {
-			
+
 		var thisMap = Mapifies.MapObjects.Set(element, options);
 		thisMap.setCenter(new GLatLng(options.mapCenter[0], options.mapCenter[1]), options.mapZoom, options.mapType);
-		
+
 		if (options.mapShowjMapsIcon) {
 			Mapifies.AddScreenOverlay(element,
 				{
@@ -150,7 +150,7 @@ Mapifies.Initialise = function ( element, options, callback ) {
 				}
 			);
 		}
-		
+
 		// Attach a controller to the map view
 		// Will attach a large or small.  If any other value passed (i.e. "none") it is ignored
 		switch (options.mapControl) {
@@ -162,38 +162,38 @@ Mapifies.Initialise = function ( element, options, callback ) {
 				break;
 		};
 		// Type of map Control (Map,Sat,Hyb)
-		if (options.mapEnableType) 
+		if (options.mapEnableType)
 			thisMap.addControl(new GMapTypeControl()); // Off by default
 		// Show the small overview map
-		if (options.mapEnableOverview) 
+		if (options.mapEnableOverview)
 			thisMap.addControl(new GOverviewMapControl());// Off by default
 		// GMap2 Functions (in order of the docs for clarity)
 		// Enable a mouse-dragable map
-		if (!options.mapEnableDragging) 
+		if (!options.mapEnableDragging)
 			thisMap.disableDragging(); // On by default
 		// Enable Info Windows
-		if (!options.mapEnableInfoWindows) 
+		if (!options.mapEnableInfoWindows)
 			thisMap.disableInfoWindow(); // On by default
 		// Enable double click zoom on the map
-		if (options.mapEnableDoubleClickZoom) 
+		if (options.mapEnableDoubleClickZoom)
 			thisMap.enableDoubleClickZoom(); // On by default
 		// Enable scrollwheel on the map
-		if (options.mapEnableScrollZoom) 
+		if (options.mapEnableScrollZoom)
 			thisMap.enableScrollWheelZoom(); //Off by default
 		// Enable smooth zooming
-		if (options.mapEnableSmoothZoom) 
+		if (options.mapEnableSmoothZoom)
 			thisMap.enableContinuousZoom(); // Off by default
 		// Enable Google Bar
-		if (options.mapEnableGoogleBar) 
+		if (options.mapEnableGoogleBar)
 			thisMap.enableGoogleBar(); //Off by default
 		// Enables Scale bar
-		if (options.mapEnableScaleControl) 
+		if (options.mapEnableScaleControl)
 			thisMap.addControl(new GScaleControl());
-		
-		if (options.debugMode) 
+
+		if (options.debugMode)
 			console.log(Mapifies);
-		
-		if (typeof callback == 'function') 
+
+		if (typeof callback == 'function')
 			return callback(thisMap, element, options);
 	} else {
 		jQuery(element).text('Your browser does not support Google Maps.');
@@ -224,7 +224,7 @@ Mapifies.MoveTo = function ( element, options, callback ) {
    * @param {String} mapType The type of map to create.  Takes a map type constant such as G_NORMAL_MAP or null(default). (Changed r74).
    * @param {Object} mapCenter An array that contains the Lat/Lng coordinates of the map center.
    * @param {Number} mapZoom The initial zoom level of the map.
-   */	
+   */
 	function defaults() {
 		return {
 			'centerMethod': 'normal',
@@ -234,7 +234,7 @@ Mapifies.MoveTo = function ( element, options, callback ) {
 		};
 	};
 	var thisMap = Mapifies.MapObjects.Get(element);
-	options = jQuery.extend(defaults(), options);	
+	options = jQuery.extend(defaults(), options);
 	var point = new GLatLng(options.mapCenter[0], options.mapCenter[1]);
 	switch (options.centerMethod) {
 		case 'normal':
@@ -386,10 +386,10 @@ Mapifies.SearchAddress = function( element, options, callback) {
 	};
 	var thisMap = Mapifies.MapObjects.Get(element);
 	options = jQuery.extend(defaults(), options);
-	
+
 	// Check to see if the Geocoder already exists in the object
 	// or create a temporary locally scoped one.
-	if (typeof thisMap.Geocoder === 'undefined') {	
+	if (typeof thisMap.Geocoder === 'undefined') {
 		if (typeof options.cache === 'undefined') {
 		 	var geoCoder = new GClientGeocoder();
 		} else {
@@ -401,12 +401,12 @@ Mapifies.SearchAddress = function( element, options, callback) {
 	}
 	thisMap.Geocoder[options.returnType](options.query, function(result){
 		if (typeof callback === 'function') {
-			return callback(result, options); 
+			return callback(result, options);
 		}
 	});
 	return;
 };
-	
+
 /**
  * The SearchDirections function allows you to search for directions between two or more points and return it to a map and a directions panel
  * @method
@@ -459,7 +459,7 @@ Mapifies.SearchDirections = function( element, options, callback) {
 	};
 	var thisMap = Mapifies.MapObjects.Get(element);
 	options = jQuery.extend(defaults(), options);
-	
+
 	var queryOptions = {
 		'locale': options.locale,
 		'travelMode': options.travelMode,
@@ -468,30 +468,30 @@ Mapifies.SearchDirections = function( element, options, callback) {
 		'getSteps': options.getSteps,
 		'preserveViewport' : options.preserveViewport
 	};
-	
+
 	var panel = $(options.panel).get(0);
-	
+
 	if (typeof thisMap.Directions === 'undefined') {
   	Mapifies.MapObjects.Append(element, 'Directions', new GDirections(thisMap, panel));
-  }	
-	
+  }
+
 	GEvent.addListener(thisMap.Directions, "load", onLoad);
   GEvent.addListener(thisMap.Directions, "error", onError);
-	
+
 	if (options.clearLastSearch) {
 		thisMap.Directions.clear();
 	}
-	
+
 	thisMap.Directions.load(options.query, queryOptions);
-	
+
 	function onLoad() {
-		if (typeof callback == 'function') return callback(thisMap.Directions, options);	
+		if (typeof callback == 'function') return callback(thisMap.Directions, options);
 	}
-	
+
 	function onError() {
-		if (typeof callback == 'function') return callback(thisMap.Directions, options);	
+		if (typeof callback == 'function') return callback(thisMap.Directions, options);
 	}
-	
+
 	return;
 };
 
@@ -529,17 +529,17 @@ Mapifies.CreateAdsManager = function( element, options, callback) {
 	};
 	var thisMap = Mapifies.MapObjects.Get(element);
 	options = jQuery.extend(defaults(), options);
-	
+
 	var adsOptions = {
 		'maxAdsOnMap':options.maxAdsOnMap,
 		'channel':options.channel,
 		'minZoomLevel':options.minZoomLevel
 	}
-	
+
 	if (typeof thisMap.AdsManager == 'undefined') {
   	Mapifies.MapObjects.Append(element, 'AdsManager', new GAdsManager(thisMap, options.publisherId, adsOptions));
-  }	
-	
+  }
+
 	if (typeof callback == 'function') return callback(thisMap.AdsManager, options);
 };
 /**
@@ -579,12 +579,12 @@ Mapifies.AddFeed = function( element, options, callback ) {
 	var feed = new GGeoXml(options.feedUrl);
 	// Add as overlay
 	thisMap.addOverlay(feed);
-	
+
 	// If the user has passed the optional mapCenter,
 	// then center the map on that point
 	if (options.mapCenter[0] && options.mapCenter[1])
 		thisMap.setCenter(new GLatLng(options.mapCenter[0], options.mapCenter[1]));
-		
+
 	if (typeof callback == 'function') return callback( feed, options );
 	return;
 };
@@ -639,15 +639,15 @@ Mapifies.AddGroundOverlay = function( element, options, callback) {
 			'overlayImage': undefined
 		};
 	};
-	
+
 	var thisMap = Mapifies.MapObjects.Get(element);
 	options = jQuery.extend(defaults(), options);
-	
+
 	var boundries = new GLatLngBounds(new GLatLng(options.overlaySouthWestBounds[0], options.overlaySouthWestBounds[1]), new GLatLng(options.overlayNorthEastBounds[0], options.overlayNorthEastBounds[1]));
 	groundOverlay = new GGroundOverlay(options.overlayImage, boundries);
-	
+
 	thisMap.addOverlay(groundOverlay);
-		
+
 	if (typeof callback == 'function') return callback( groundOverlay, options );
 	return;
 };
@@ -702,6 +702,7 @@ Mapifies.AddMarker = function ( element, options, callback ) {
 	 */
 	function defaults() {
 		var values = {
+		    'pointTitle' : '+info',
 			'pointLatLng': undefined,
 			'pointHTML': undefined,
 			'pointOpenHTMLEvent': 'click',
@@ -718,15 +719,16 @@ Mapifies.AddMarker = function ( element, options, callback ) {
 	};
 	var thisMap = Mapifies.MapObjects.Get(element);
 	options = jQuery.extend({}, defaults(), options);
-	
+
 	var markerOptions = {}
-	
+
+    jQuery.extend(markerOptions, {'title': options.pointTitle});
 	if (typeof options.pointIcon == 'object')
 		jQuery.extend(markerOptions, {'icon': options.pointIcon});
-		
+
 	if (options.pointIsDraggable)
 		jQuery.extend(markerOptions, {'draggable': options.pointIsDraggable});
-			
+
 	if (options.centerMap) {
 		switch (options.centerMoveMethod) {
 			case 'normal':
@@ -737,11 +739,11 @@ Mapifies.AddMarker = function ( element, options, callback ) {
 			break;
 		}
 	}
-		
-		
+
+
 	// Create marker, optional parameter to make it draggable
 	var marker = new GMarker(new GLatLng(options.pointLatLng[0],options.pointLatLng[1]), markerOptions);
-		
+
 	// If it has HTML to pass in, add an event listner for a click
 	if(options.pointHTML)
 		GEvent.addListener(marker, options.pointOpenHTMLEvent, function(){
@@ -755,12 +757,12 @@ Mapifies.AddMarker = function ( element, options, callback ) {
 
 	// If the marker manager exists, add it
 	if(thisMap.MarkerManager) {
-		thisMap.MarkerManager.addMarker(marker, options.pointMinZoom, options.pointMaxZoom);	
+		thisMap.MarkerManager.addMarker(marker, options.pointMinZoom, options.pointMaxZoom);
 	} else {
 		// Direct rendering to map
 		thisMap.addOverlay(marker);
 	}
-		
+
 	if (typeof callback == 'function') return callback(marker, options);
 	return;
 };
@@ -814,7 +816,7 @@ Mapifies.CreateMarkerManager = function(element, options, callback) {
 			'markerManager': 'GMarkerManager',
 			// Border Padding in pixels
 			'borderPadding': 100,
-			// Max zoom level 
+			// Max zoom level
 			'maxZoom': 17,
 			// Track markers
 			'trackMarkers': false
@@ -822,13 +824,13 @@ Mapifies.CreateMarkerManager = function(element, options, callback) {
 	}
 	var thisMap = Mapifies.MapObjects.Get(element);
 	options = jQuery.extend(defaults(), options);
-	
+
 	var markerManagerOptions = {
 		'borderPadding': options.borderPadding,
 		'maxZoom': options.maxZoom,
 		'trackMarkers': options.trackMarkers
 	}
-	
+
 	var markerManager = new window[options.markerManager](thisMap, options);
 	Mapifies.MapObjects.Append(element, 'MarkerManager',markerManager);
 
@@ -883,25 +885,25 @@ Mapifies.AddPolygon = function( element, options, callback ) {
 	 		'polygonClickable': true
 		}
 	}
-	
+
 	var thisMap = Mapifies.MapObjects.Get(element);
 	options = jQuery.extend(defaults(), options);
 	var polygonOptions = {};
-	
+
 	if (!options.polygonClickable)
 		polygonOptions = jQuery.extend(polygonOptions, {clickable: false});
-	 		
+
 	if(typeof options.mapCenter !== 'undefined' && options.mapCenter[0] && options.mapCenter[1])
 		thisMap.setCenter(new GLatLng(options.mapCenter[0], options.mapCenter[1]));
-	
+
 	var allPoints = [];
 	jQuery.each(options.polygonPoints, function(i, point) {
 		allPoints.push(new GLatLng(point[0],point[1]));
 	});
-	
+
 	var polygon = new GPolygon(allPoints, options.polygonStrokeColor, options.polygonStrokeWeight, options.polygonStrokeOpacity, options.polygonFillColor, options.polygonFillOpacity, polygonOptions);
 	thisMap.addOverlay(polygon);
-		
+
 	if (typeof callback == 'function') return callback(polygon, polygonOptions, options);
 	return;
 }
@@ -968,13 +970,13 @@ Mapifies.AddPolyline = function (element, options, callback) {
 			'polylineClickable': true
 		};
 	};
-	
+
 	var thisMap = Mapifies.MapObjects.Get(element);
 	options = jQuery.extend(defaults(), options);
 	var polyLineOptions = {};
 	if (options.polylineGeodesic)
 		jQuery.extend(polyLineOptions, {geodesic: true});
-			
+
 	if(!options.polylineClickable)
 		jQuery.extend(polyLineOptions, {clickable: false});
 
@@ -988,7 +990,7 @@ Mapifies.AddPolyline = function (element, options, callback) {
 
 	var polyline = new GPolyline(allPoints, options.polylineStrokeColor, options.polylineStrokeWidth, options.polylineStrokeOpacity, polyLineOptions);
 	thisMap.addOverlay(polyline);
-		
+
 	if (typeof callback == 'function') return callback(polyline, polyLineOptions, options);
 	return;
 }
@@ -1048,7 +1050,7 @@ Mapifies.AddScreenOverlay = function( element, options, callback ) {
 
 	var overlay = new GScreenOverlay(options.imageUrl, new GScreenPoint(options.screenXY[0],options.screenXY[1]), new GScreenPoint(options.overlayXY[0],options.overlayXY[1]), new GScreenSize(options.size[0],options.size[1]));
 	thisMap.addOverlay(overlay);
-		
+
 	if (typeof callback == 'function') return callback(overlay, options);
 };
 
@@ -1103,14 +1105,14 @@ Mapifies.CreateStreetviewPanorama = function( element, options, callback ) {
 	var thisMap = Mapifies.MapObjects.Get(element);
 	options = jQuery.extend(defaults(), options);
 	// Create Street View Overlay
-	
+
 	var container = null;
 	if (options.overideContainer !== '') {
 		container = jQuery(options.overideContainer).get(0);
 	} else {
 		container = jQuery(element).get(0);
 	}
-	
+
 	var viewOptions = {};
 	if (options.pov.length > 0) {
 		jQuery.extend(viewOptions, {'pov':new GPov(options.latlng[0],options.latlng[1],options.latlng[2])});
@@ -1118,7 +1120,7 @@ Mapifies.CreateStreetviewPanorama = function( element, options, callback ) {
 	if (options.latlng.length > 0) {
 		jQuery.extend(viewOptions, {'latlng':new GLatLng(options.latlng[0],options.latlng[1])});
 	}
-	
+
 	var overlay = new GStreetviewPanorama(container, viewOptions);
 	if (typeof callback == 'function') return callback(overlay, options);
 	return;
@@ -1247,10 +1249,10 @@ Mapifies.SearchCode = function ( code ) {
  */
 Mapifies.GetTravelMode = function ( travelMode ) {
 	switch(travelMode) {
-		case 'driving':	
+		case 'driving':
 			travelMode = G_TRAVEL_MODE_DRIVING;
 		break;
-		case 'walking':	
+		case 'walking':
 			travelMode = G_TRAVEL_MODE_WALKING;
 		break;
 	};
@@ -1299,10 +1301,10 @@ Mapifies.createIcon = function (options) {
 			'iconTransparent': undefined
 		};
 	};
-	
+
 	options = jQuery.extend(defaults(), options);
 	var icon = new GIcon(G_DEFAULT_ICON);
-		
+
 	if(options.iconImage)
 		icon.image = options.iconImage;
 	if(options.iconShadow)
@@ -1369,3 +1371,4 @@ if (!Mapifies) Mapifies = {};
 		});
 	}
 })(jQuery);
+
