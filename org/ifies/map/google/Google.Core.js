@@ -92,7 +92,7 @@ Mapifies.Initialise = function ( element, options, callback ) {
 	 * @param {Boolean} mapEnableSmoothZoom Defines if smooth scrolling is enabled.  Default false.
 	 * @param {Boolean} mapEnableGoogleBar Defines if the google map search tool is enabled.  Default false.
 	 * @param {Boolean} mapEnableScaleControl Defines if the scale bar is shown.  Default false.
-	 * @param {Boolean} mapShowjMapsIcon Defines if the jMaps icon is shown.  Default true.
+	 * @param {Boolean} mapShowjMapsIcon Defines if the jMaps icon is shown.  Default true. <strong>DEPRICATED</strong>
 	 * @param {Boolean} debugMode Defines if the map object created is returned to the Firebug console.  Default false.
 	 * @return {Object} The options for SearchAddress
 	 */
@@ -128,6 +128,7 @@ Mapifies.Initialise = function ( element, options, callback ) {
 			// Enables scale bar
 			'mapEnableScaleControl': false,
 			// Enable the Mapifies icon
+			// This is now depricated
 			'mapShowjMapsIcon': true,
 			//Debug Mode
 			'debugMode': false
@@ -139,17 +140,6 @@ Mapifies.Initialise = function ( element, options, callback ) {
 			
 		var thisMap = Mapifies.MapObjects.Set(element, options);
 		thisMap.setCenter(new GLatLng(options.mapCenter[0], options.mapCenter[1]), options.mapZoom, options.mapType);
-		
-		if (options.mapShowjMapsIcon) {
-			Mapifies.AddScreenOverlay(element,
-				{
-					'imageUrl':'http://hg.digitalspaghetti.me.uk/jmaps/raw-file/3228fade0b3c/docs/images/jmaps-mapicon.png',
-					'screenXY':[70,10],
-					'overlayXY':[0,0],
-					'size':[42,25]
-				}
-			);
-		}
 		
 		// Attach a controller to the map view
 		// Will attach a large or small.  If any other value passed (i.e. "none") it is ignored
