@@ -1,39 +1,55 @@
-<project name="jMaps" default="Google" basedir=".">
-	<property description="Source Folder" name="SRC_DIR" value="org/ifies/map"  />
-    <property description="Files for parsing etc." name="BUILD_DIR" value="build" />
-    <property description="Rhino JS Engine" name="JAR" value="${BUILD_DIR}/js.jar" />
-    <property description="Destination Folder" name="DIST_DIR" value="dist" />
+<project name="jMaps" default="build" basedir=".">
+	<property description="Source Folder" name="SRC_DIR" value="org/ifies/map" />
+  <property description="Files for parsing etc." name="BUILD_DIR" value="build" />
+  <property description="Rhino JS Engine" name="JAR" value="${BUILD_DIR}/js.jar" />
+  <property description="YUI Compressor" name="YUI" value="${BUILD_DIR}/yuicompressor.jar" />
+  <property description="Destination Folder" name="DIST_DIR" value="dist" />
 
-    <!-- Files names for distribution -->
-    <property name="Google" value="${DIST_DIR}/jquery.jmap.js" />
-    <!-- MAIN -->
+  <!-- Files names for distribution -->
+  <property name="DIST_FILE" value="${DIST_DIR}/jquery.jmap.js" />
+  <property name="MINI_FILE" value="${DIST_DIR}/jquery.jmap.min.js" />
 
-    <target name="Google" description="Main jMap build, concatenates source files and replaces @VERSION">
-        <echo message="Building ${Google}" />
-        <mkdir dir="${DIST_DIR}" />
-        <concat destfile="${Google}">
-            <fileset dir="${SRC_DIR}/google" includes="Google.Core.js" />
-            <fileset dir="${SRC_DIR}/google" includes="Google.Address.js" />
-            <fileset dir="${SRC_DIR}/google" includes="Google.AdsManager.js" />
-            <fileset dir="${SRC_DIR}/google" includes="Google.GeoXML.js" />
-            <fileset dir="${SRC_DIR}/google" includes="Google.GroundOverlay.js" />
-            <fileset dir="${SRC_DIR}/google" includes="Google.Markers.js" />
-						<fileset dir="${SRC_DIR}/google" includes="Google.Polygon.js" />
-						<fileset dir="${SRC_DIR}/google" includes="Google.Polyline.js" />
-						<fileset dir="${SRC_DIR}/google" includes="Google.ScreenOverlay.js" />
-						<fileset dir="${SRC_DIR}/google" includes="Google.Streetview.js" />
-						<fileset dir="${SRC_DIR}/google" includes="Google.Traffic.js" />
-						<!--<fileset dir="${SRC_DIR}/google" includes="Google.Copyright.js" />-->
-						<fileset dir="${SRC_DIR}/google" includes="Mapifies.Helpers.js" />
-						<fileset dir="${SRC_DIR}" includes="Mapifies.jQuery.Alias.js" />
-        </concat>
-    	<java jar="${JAR}" fork="true">
-            <arg value="${Google}" />
-      </java>
-        <echo message="${Google} built." />
-    </target>
+  <!-- MAIN -->
+  <target name="build" description="Main jMap build, concatenates source files and replaces @VERSION">
+    <echo message="Building ${DIST_FILE}" />
+    
+    <mkdir dir="${DIST_DIR}" />
+    
+    <concat destfile="${DIST_FILE}">
+      <fileset dir="${SRC_DIR}/google" includes="Google.Core.js" />
+      <fileset dir="${SRC_DIR}/google" includes="Google.Address.js" />
+      <fileset dir="${SRC_DIR}/google" includes="Google.AdsManager.js" />
+      <fileset dir="${SRC_DIR}/google" includes="Google.GeoXML.js" />
+      <fileset dir="${SRC_DIR}/google" includes="Google.GroundOverlay.js" />
+      <fileset dir="${SRC_DIR}/google" includes="Google.Markers.js" />
+			<fileset dir="${SRC_DIR}/google" includes="Google.Polygon.js" />
+			<fileset dir="${SRC_DIR}/google" includes="Google.Polyline.js" />
+			<fileset dir="${SRC_DIR}/google" includes="Google.ScreenOverlay.js" />
+			<fileset dir="${SRC_DIR}/google" includes="Google.Streetview.js" />
+			<fileset dir="${SRC_DIR}/google" includes="Google.Traffic.js" />
+			<!--<fileset dir="${SRC_DIR}/google" includes="Google.Copyright.js" />-->
+			<fileset dir="${SRC_DIR}/google" includes="Mapifies.Helpers.js" />
+			<fileset dir="${SRC_DIR}" includes="Mapifies.jQuery.Alias.js" />
+    </concat>
+    
+    <java jar="${JAR}" fork="true">
+      <arg value="${DIST_FILE}" />
+    </java>
+    
+    <echo message="${DIST_FILE} built." />
+  </target>
 
-    <target name="clean">
-        <delete dir="${DIST_DIR}" />
-    </target>
+  <target name="minify" depends="build" description="Minify distribution file with YUI Compressor">
+    <echo message="Minfying ${DIST_FILE}." />
+    
+    <java jar="${YUI}" fork="true">
+      <arg line="${basedir}/${DIST_FILE} -o ${basedir}/${MINI_FILE}" />
+    </java>
+    
+    <echo message="${DIST_FILE} minified." />
+  </target>
+
+  <target name="clean">
+    <delete dir="${DIST_DIR}" />
+  </target>
 </project>
